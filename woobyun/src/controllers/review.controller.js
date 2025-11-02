@@ -1,21 +1,23 @@
-import { addReview } from "../services/review.service.js";
 import { StatusCodes } from "http-status-codes";
+import { bodyToReview } from "../dtos/review.dto.js";
+import { addReview } from "../services/review.service.js";
 
-export const handleAddReview = async (req, res) => {
+export const handleAddReview = async (req, res, next) => {
   try {
-    console.log("리뷰 추가 요청이 들어왔습니다!");
-    console.log("params:", req.params);
-    console.log("body:", req.body);
+    const storeId = Number(req.params.storeId);
 
-    const storeId = req.params.storeId;
-    const review = await addReview(storeId, req.body);
+    console.log(`Review 요청 storeId: ${storeId}`);
+    //storeId의 존재 여부를 확인
+    if(!storeId) throw new NotFoundError("storeId 값이 존재하지 않습니다!");
+    
+    //DTO 변환
+    const reviewDTO = bodyToReview(req.body, storeId);
+
+    //비즈니스 로직을 호출
+    const review = await addReview(reviewDTO);
 
     res.status(StatusCodes.OK).json({ result: review });
-  } catch (err) {
-    console.error("Service Error:", err);
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      error: "리뷰 추가 중 오류가 발생했습니다.",
-      detail: err.message,
-    });
+  } catch (err) {//에러가 발생했을 때 실행되는 부분
+    next(err);
   }
 };

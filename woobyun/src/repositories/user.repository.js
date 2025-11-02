@@ -1,40 +1,35 @@
+/*
+1. 이메일이 유니크한 값이라면 추가로 이메일 중복 체크하지 않아도 된다.
+-> 이미 존재한다면 에러를 뱉어낼 거라서 그 부분만 catch해서 에러 throw 해주는 로직만 추가해주시면 될 것 같다.
+*/
+
 import { pool } from "../db.config.js";
 
-// 회원 추가
-export const addUser = async (data) => {
-  const conn = await pool.getConnection();
-
-  try {
-    const [result] = await conn.query(
-      `INSERT INTO users 
-      (user_name, password, gender, birthdate, address, phone, social_provider, social_id, point_balance, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW());`,
-      [
+export const addUserToDB = async (data) => {
+  try{
+    const [result] = await pool.query(
+      `INSERT INTO users (
+        user_name, gender, birthdate, address, phone,
+        social_provider, social_id, password, point_balance,
+        created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, NOW(), NOW())`,
+        [
         data.user_name,
-        data.password,
         data.gender,
         data.birthdate,
         data.address,
         data.phone,
         data.social_provider,
         data.social_id,
-        data.point_balance,
+        data.password,
       ]
     );
-    return result.insertId;
-  } catch (err) {
-    console.error("DB Error in addUser:", err);
-    throw new Error("유저 추가 중 오류가 발생했습니다.");
-  } finally {
-    conn.release();
-  }
-};
 
-// 이메일 중복 체크
-export const isExistSocialId = async (social_id) => {
-  const [rows] = await pool.query(
-    `SELECT EXISTS(SELECT 1 FROM users WHERE social_id = ?) AS isExist;`,
-    [social_id]
-  );
-  return rows[0].isExist;
+    return result.insertId;
+  } catch(err){
+    if(err.code === "ER_USER_ENTRY"){
+      throw new Error("이미 존재하는 사용자입니다.");
+    }
+    throw err;
+  }
 };

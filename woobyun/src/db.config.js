@@ -1,3 +1,5 @@
+//피드백 -> 추후 개발할 때 값이 없을 때 넣는 기본값은 넣지 않는게 좋다 -보안 이슈
+
 import mysql from "mysql2/promise";
 import dotenv from "dotenv";
 
