@@ -2,11 +2,16 @@ import { addUserToDB } from "../repositories/user.repository.js";
 import { responseFromUser } from "../dtos/user.dto.js";
 
 export const addUser = async (userDTO) => {
-
-  //사용자 추가
-  const userId = await addUserToDB(userDTO);
-  if (!userId) throw new Error("사용자 등록에 실패했습니다.");
-
-  //응답 데이터 반환 DTO
-  return responseFromUser({user_id: userId, ...userDTO,});
+  try{
+    //사용자 추가
+    const createdUser = await addUserToDB(userDTO);
+    //응답 데이터 반환 DTO
+    return responseFromUser(createdUser);
+  }catch (err){
+    if(err.code === "ERRx_USER_ENTRY"){
+      throw new Error("이미 존재하는 사용자입니다.")
+    }
+    throw err;
+  }
+  
 };

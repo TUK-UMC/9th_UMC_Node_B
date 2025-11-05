@@ -2,6 +2,8 @@ import { StatusCodes } from "http-status-codes";
 import { challengeMission } from "../services/usermission.service.js";
 import { RequestError } from "../errors/systemErrors.js";
 import { bodyToUserMission} from "../dtos/usermission.dto.js";
+import { listUserOngoingMissions } from "../services/usermission.service.js";
+import { completeUserMission } from "../services/usermission.service.js";
 
 export const handleChallengeMission = async (req, res, next) => {
   try {
@@ -22,3 +24,30 @@ export const handleChallengeMission = async (req, res, next) => {
     next(err);
   }
 };
+
+//진행 중인 미션 목록 조회
+export const handleListUserOngoingMissions = async(req, res, next) => {
+  try{
+    const userId = parseInt(req.params.userId);
+    const cursor = typeof req.query.cursor === "string" ? parseInt(req.query.cursor): 0;
+
+    const missions = await listUserOngoingMissions(userId, cursor);
+    res.status(StatusCodes.OK).json(missions);
+  }catch(err){
+    next(err);
+  }
+};
+
+//진행 중인 미션 완료 처리하기
+export const handleCompleteUserMissions = async ( req, res, next) => {
+  try{
+    const userId = parseInt(req.params.userId);
+    const userMissionId = parseInt(req.params.userMissionId);
+
+    const updatedMission = await completeUserMission(userId, userMissionId);
+    res.status(200).json(updatedMission);
+  }catch(err){
+    next(err);
+  }
+};
+ 

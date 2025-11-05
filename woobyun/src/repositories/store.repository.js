@@ -3,18 +3,25 @@
 -> 이렇게 수정할 경우 finally까지 삭제 해주스면 될 것 같다.
 */
 
-import { pool } from "../db.config.js";
+import { prisma } from "../db.config.js";
 
 export const addStoreToDB = async (data) => {
-  const [result] = await pool.query(
-    `INSERT INTO store( name, region_name, store_image_url, address, description, created_at, updated_at) VALUES (?, ?, ?, ?, ?, NOW(), NOW())`,      [
-      data.name,
-      data.region_name,
-      data.store_image_url,
-      data.address,
-      data.description,
-    ]
-  );
-  return result.insertId
+  try{
+    const createdStore = await prisma.store.create({
+      data: {
+        store_name: data.store_name,
+        region_name: data.region_name,
+        store_image_url: data.store_image_url || null,
+        address: data.address,
+        description: data.description || null,
+      }
+    });
+    return createdStore;
+  }catch (err){
+    if(err.code === "P2003"){
+      throw new Error("가게 추가에 오류가 있습니다.");
+    }
+    throw err;
+  }
   
 };
