@@ -1,21 +1,19 @@
-import { prisma } from "../db.config.js";
+import { pool } from "../db.config.js";
 
-export const isStoreExist = async (data) => {
-  const store = await prisma.store.findUnique({
-    where: { store_id: data.store_id },
-  });
-  return !!store;
+//가게 존재 여부 확인
+export const isStoreExist = async (storeId) => {
+  const [rows] = await pool.query(
+    "SELECT EXISTS(SELECT 1 FROM store WHERE store_id = ?) AS isExist;",
+    [storeId]
+  );
+  return rows[0].isExist === 1;
 };
 
-export const addReviewToDB = async (data) => {
-  const review = await prisma.review.create({
-    data: {
-      store_id: data.store_id,
-      user_id: data.user_id,
-      rating: data.rating,
-      content: data.content,
-    },
-  });
-
-  return review.review_id;
+//리뷰 추가
+export const addReviewToDB = async (storeId, data) => {
+  const [result] = await pool.query(
+    "INSERT INTO review (store_id, user_id, rating, content, created_at, updated_at) VALUES (?, ?, ?, ?, NOW(), NOW());",
+    [storeId, data.user_id, data.rating, data.content]
+  );
+  return result.insertId;
 };

@@ -1,12 +1,18 @@
-import { addUserToDB } from "../repositories/user.repository.js";
+import bcrypt from "bcrypt";
+import { addUser, isExistSocialId } from "../repositories/user.repository.js";
 import { responseFromUser } from "../dtos/user.dto.js";
+import { RequestError } from "../utils/systemErrors.js";
 
-export const addUser = async (userDTO) => {
 
-  //사용자 추가
-  const userId = await addUserToDB(userDTO);
-  if (!userId) throw new Error("사용자 등록에 실패했습니다.");
+export const userSignUp = async (data) => {
+const exist = await isExistSocialId(data.social_id);
+if (exist) throw new RequestError("이미 존재하는 소셜 계정입니다.");
 
-  //응답 데이터 반환 DTO
-  return responseFromUser({user_id: userId, ...userDTO,});
+
+const saltRounds = 10;
+const hashedPassword = await bcrypt.hash(data.password, saltRounds);
+const userId = await addUser({ ...data, password: hashedPassword });
+
+
+return responseFromUser({ user_id: userId, ...data });
 };

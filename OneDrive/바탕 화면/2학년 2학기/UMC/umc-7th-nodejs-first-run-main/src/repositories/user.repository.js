@@ -1,26 +1,40 @@
-import { prisma } from "../db.config.js";
+import { pool } from "../db.config.js";
 
-export const addUserToDB = async (data) => {
+// 회원 추가
+export const addUser = async (data) => {
+  const conn = await pool.getConnection();
+
   try {
-    const user = await prisma.user.create({
-      data: {
-        user_name: data.user_name,
-        gender: data.gender,
-        birthdate: data.birthdate ? new Date(data.birthdate) : null,
-        address: data.address,
-        phone: data.phone,
-        social_provider: data.social_provider,
-        social_id: data.social_id,
-        password: data.password,
-        point_balance: data.point_balance ?? 0,
-      },
-    });
-
-    return user.user_id;
+    const [result] = await conn.query(
+      `INSERT INTO users 
+      (user_name, password, gender, birthdate, address, phone, social_provider, social_id, point_balance, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW());`,
+      [
+        data.user_name,
+        data.password,
+        data.gender,
+        data.birthdate,
+        data.address,
+        data.phone,
+        data.social_provider,
+        data.social_id,
+        data.point_balance,
+      ]
+    );
+    return result.insertId;
   } catch (err) {
-    if (err.code === "P2002") {
-      throw new Error("이미 존재하는 사용자입니다.");
-    }
-    throw err;
+    console.error("DB Error in addUser:", err);
+    throw new Error("유저 추가 중 오류가 발생했습니다.");
+  } finally {
+    conn.release();
   }
+};
+
+// 이메일 중복 체크
+export const isExistSocialId = async (social_id) => {
+  const [rows] = await pool.query(
+    `SELECT EXISTS(SELECT 1 FROM users WHERE social_id = ?) AS isExist;`,
+    [social_id]
+  );
+  return rows[0].isExist;
 };
