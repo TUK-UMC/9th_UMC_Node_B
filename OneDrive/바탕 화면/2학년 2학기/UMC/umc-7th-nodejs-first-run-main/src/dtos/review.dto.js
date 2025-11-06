@@ -1,13 +1,13 @@
-//입력 DTO
-export const bodyToReview = (body, storeId) => ({
-  store_id: storeId,
-  user_id: body.user_id,
-  rating: body.rating,
-  content: body.content,
-
-});
-
-//출력 DTO
+export const bodyToReview = (body) => {
+  const now = new Date();
+  return {
+    user_id: body.user_id,
+    rating: body.rating,
+    content: body.content,
+    created_at: now,
+    updated_at: now,
+  };
+};
 export const responseFromReview = (review) => ({
   review_id: review.id,
   store_id: review.store_id,
