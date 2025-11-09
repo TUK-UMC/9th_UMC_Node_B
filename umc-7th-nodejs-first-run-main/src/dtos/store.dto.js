@@ -1,7 +1,3 @@
-/*
-1. 처음 실행이 되는지 확인하기 위해서 문자열들을 공백으로 허용하는 것은 좋지만 만약 필수 데이터라면 이 부분은 지워주셔야 된다.
--> 대신 catch문이 필요하겠지요?(이미 컨트롤러에서 잡는중)
-*/
 
 export const bodyToStore = (body) => ({
   store_name: body.store_name,
