@@ -1,5 +1,5 @@
 //입력 DTO
-export const bodyToUser = (body, ) => ({
+export const bodyToUser = (body) => ({
   user_name: body.user_name,
   password: body.password,
   gender: body.gender,
@@ -12,13 +12,13 @@ export const bodyToUser = (body, ) => ({
 });
 
 //출력 DTO
-export const responseFromUser = (data) => ({
-  user_id: data.user_id,
-  user_name: data.user_name,
-  gender: data.gender,
-  birthdate: data.birthdate,
-  address: data.address,
-  phone: data.phone,
-  social_provider: data.social_provider,
-  point_balance: data.point_balance,
+export const responseFromUser = (user) => ({
+  user_id: user.user_id,
+  user_name: user.user_name,
+  gender: user.gender,
+  birthdate: user.birthdate,
+  address: user.address,
+  phone: user.phone,
+  social_provider: user.social_provider,
+  point_balance: user.point_balance,
 });

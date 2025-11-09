@@ -1,32 +1,59 @@
-/*
-1. DTO에서 storeId도 한번에 관리해준다면 미션 추가 로직에서 data만 받아오면 된다.
--> isStoreExist 는 data.storeId, 이런식 으로 꺼내올 수 있다.
- */
+import { prisma } from "../db.config.js";
 
-import { pool } from "../db.config.js";
-
-// 가게 존재 여부 확인
+//가게 존재 여부 확인
 export const isStoreExist = async (data) => {
-  const [rows] = await pool.query(
-    `SELECT COUNT(*) AS cnt FROM store WHERE store_id = ?`, 
-    [data.store_id]);
-  return rows[0].cnt > 0;
+  const store = await prisma.store.findUnique({
+    where:{
+      store_id: data.store_id
+    }
+  });
+  return !!store //존재하면 ture!!
 };
 
 // 미션 추가
 export const addMissionToDB = async (data) => {
-  const [result] = await pool.query(
-    `INSERT INTO mission (store_id, title, owner_code, description, reward_point, expire_at, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())`,
-    [
-      data.store_id, 
-      data.title, 
-      data.owner_code, 
-      data.description, 
-      data.reward_point, 
-      data.expire_at
-    ]
-  );
+  try{
+    const createdMission = await prisma.mission.create({
+      data:{
+        store_id: data.store_id,
+        title: data.title,
+        owner_code: data.owner_code,
+        description: data.description,
+        reward_point: data.reward_point,
+        expire_at: data.expire_at
+      }
+    });
+   return createdMission;
+  }catch(err){
+    if(err.code === "P2003"){
+      throw new Error("해당하는 가게가 존재하지 않습니다.");
+    }
+    throw err;
+  }
 
-  return result.insertId;
+};
+
+//특정 가게에서의 미션 목록 조회
+export const getAllStoreMissions = async (storeId, cursor) => {
+  const missions = await prisma.mission.findMany({
+    select: {
+      mission_id: true,
+      title: true,
+      description: true,
+      reward_point: true,
+      expire_at:true,
+      created_at: true
+    },
+    where: {
+      store_id: storeId,
+      mission_id: {
+        gt: cursor
+      }
+    },
+    orderBy:{
+      mission_id: "asc"
+    },
+    take: 5
+  });
+  return missions;
 };
