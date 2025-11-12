@@ -1,3 +1,8 @@
+/*
+1. 결과반환도 DTO로 관리해주면 더 편하다.
+-> 나중에 다른 API를 만들때고 응답 형식이 같을 경우가 많기 때문에 DTO로 관리하면 더 편하게 개발할 수 있다.
+-> 이렇게 했을 시 프론트앤드 연동도 편해진다.
+*/
 
 import { isStoreExist, addMissionToDB } from "../repositories/mission.repository.js";
 import { responseFromMission } from "../dtos/mission.dto.js";
