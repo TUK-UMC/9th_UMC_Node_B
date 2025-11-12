@@ -59,6 +59,7 @@ model store {
   //미션 관련 관계 추가
   usermissions usermission[]
   @@map("store")
+  @@unique([store_id])
 }
 
 //리뷰 테이블
@@ -113,6 +114,7 @@ model usermission {
   store   store   @relation(fields: [store_id], references: [store_id])
 
   @@map("usermission")
+  @@unique([user_id, mission_id, store_id])
 }
 enum MissionStatus {
   waiting

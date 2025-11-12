@@ -6,17 +6,20 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "nodemon -e js,json,prisma --exec \"prisma generate && node src/index.js\""
+    "dev": "nodemon -e js,json,prisma --exec \"node src/index.js\""
   },
   "author": "Subin Kim <sudosubin@gmail.com>",
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^6.18.0",
     "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.0.0-0",
     "http-status-codes": "^2.3.0",
-    "mysql2": "^3.15.3"
+    "morgan": "^1.10.1",
+    "mysql2": "^3.15.3",
+    "nodemon": "^3.1.10"
   }
 }

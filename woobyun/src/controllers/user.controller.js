@@ -11,8 +11,10 @@ export const handleUserSignUp = async (req, res, next) => {
     const user = await addUser(userDTO); 
 
     res.status(StatusCodes.CREATED).json({
+      isSuccess: true,
+      code: StatusCodes.CREATED,
       message: `user_id: ${user.user_id} 회원가입 성공`, 
-      result: user,
+      data: user,
     });
 
   } catch (err) {//에러가 발생했을 때 실행되는 부분
