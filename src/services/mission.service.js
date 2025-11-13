@@ -1,45 +1,29 @@
-import {
-  responseFromMission,
-  responseFromUserMission,
-} from "../dtos/mission.dto.js";
-import { checkStoreExists } from "../repositories/store.repository.js";
-import {
-  addMission,
-  getMission,
-  addUserMission,
-  getUserMission,
-} from "../repositories/mission.repository.js";
 
-export const missionRegister = async (data) => {
-  const storeExists = await checkStoreExists(data.storeId);
+import { isStoreExist, addMissionToDB } from "../repositories/mission.repository.js";
+import { responseFromMission } from "../dtos/mission.dto.js";
+
+import { getAllStoreMissions } from "../repositories/mission.repository.js";
+import { responseFromMissions } from "../dtos/mission.dto.js";
+
+export const addMission = async (missionDTO) => {
+  // 가게 존재 여부 검증
+  const storeExists = await isStoreExist(missionDTO);
   if (!storeExists) {
-    throw new Error("존재하지 않는 가게입니다.");
+    throw new Error(`store_id ${missionDTO.store_id}에 해당하는 가게가 존재하지 않습니다.`);
   }
 
-  const missionId = await addMission({
-    storeId: data.storeId,
-    reward: data.reward,
-    deadline: data.deadline,
-    missionSpec: data.missionSpec,
-  });
+  // 미션 추가
+  const createdMission = await addMissionToDB(missionDTO);
+  if (!createdMission) throw new Error("미션 등록에 실패했습니다.");
 
-  const mission = await getMission(missionId);
 
-  return responseFromMission({ mission });
+  // 결과 반환 -> DTO로 반환
+  return responseFromMission(createdMission);
 };
 
-export const missionChallenge = async (data) => {
-  const mission = await getMission(data.missionId);
-  if (!mission) {
-    throw new Error("존재하지 않는 미션입니다.");
-  }
+// 특정 가게에서의 미션 조회
+export const listStoreMissions = async (storeId, cursor) => {
+  const missions = await getAllStoreMissions(storeId, cursor);
 
-  const userMissionId = await addUserMission({
-    userId: data.userId,
-    missionId: data.missionId,
-  });
-
-  const userMission = await getUserMission(userMissionId);
-
-  return responseFromUserMission({ userMission });
-};
+  return responseFromMissions(missions);
+}
