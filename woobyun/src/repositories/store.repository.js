@@ -1,27 +1,27 @@
-/*
-1. 요청이 하나씩 들어올 거라서 getConnection은 사용하지 않아도 될 것 같아,
--> 이렇게 수정할 경우 finally까지 삭제 해주스면 될 것 같다.
-*/
-
 import { prisma } from "../db.config.js";
+import { RequestError } from "../errors/systemErrors.js";
 
 export const addStoreToDB = async (data) => {
-  try{
-    const createdStore = await prisma.store.create({
-      data: {
-        store_name: data.store_name,
-        region_name: data.region_name,
-        store_image_url: data.store_image_url || null,
-        address: data.address,
-        description: data.description || null,
-      }
-    });
-    return createdStore;
-  }catch (err){
-    if(err.code === "P2003"){
-      throw new Error("가게 추가에 오류가 있습니다.");
-    }
-    throw err;
+  //가게 등록시 필수 값 확인
+  if(!data.store_name||!data.region_name||!data.address){ 
+    throw new RequestError("name, region_name, address는 필수 입니다.");
   }
-  
+  const createdStore = await prisma.store.create({
+    data: {
+      store_name: data.store_name,
+      region_name: data.region_name,
+      store_image_url: data.store_image_url || null,
+      address: data.address,
+      description: data.description || null,
+    }
+  });
+
+  return createdStore;
+};
+
+//중복된 가게가 있는지 검사
+export const findStoreByName = async (store_name) => {
+  return await prisma.store.findFirst({
+    where: { store_name },
+  });
 };
