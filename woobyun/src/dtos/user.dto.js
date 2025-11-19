@@ -20,5 +20,6 @@ export const responseFromUser = (user) => ({
   address: user.address,
   phone: user.phone,
   social_provider: user.social_provider,
+  social_id: user.social_id,
   point_balance: user.point_balance,
 });
