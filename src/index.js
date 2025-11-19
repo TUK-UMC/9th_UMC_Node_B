@@ -8,6 +8,8 @@ import { handleAddStore } from "./controllers/store.controller.js";
 import { handleAddMission, handleListStoreMissions } from "./controllers/mission.controller.js";  // ← handleListStoreMissions 추가
 import { handleChallengeMission, handleListUserOngoingMissions, handleCompleteUserMissions } from "./controllers/usermission.controller.js";  // ← 2개 추가
 import { handleAddReview, handleListStoreReviews, handleListUserReviews } from "./controllers/review.controller.js";
+import swaggerAutogen from "swagger-autogen";
+import swaggerUiExpress from "swagger-ui-express";
 
 dotenv.config();
 
@@ -28,6 +30,16 @@ app.use((req, res, next) => {
   };
   next();
 });
+
+app.use(
+  "/docs",
+  swaggerUiExpress.serve,
+  swaggerUiExpress.setup({}, {
+    swaggerOptions: {
+      url: "/openapi.json",
+    },
+  })
+);
 
 app.use(cors());
 app.use(express.static("public"));
@@ -56,6 +68,27 @@ app.get('/getcookie', (req, res) => {
     }
 });
 
+app.get("/openapi.json", async (req, res, next) => {
+  // #swagger.ignore = true
+  const options = {
+    openapi: "3.0.0",
+    disableLogs: true,
+    writeOutputFile: false,
+  };
+  const outputFile = "/dev/null"; // 파일 출력은 사용하지 않습니다.
+  const routes = ["./src/index.js"];
+  const doc = {
+    info: {
+      title: "UMC 9th",
+      description: "UMC 9th Node.js 테스트 프로젝트입니다.",
+    },
+    host: "localhost:3000",
+  };
+
+  const result = await swaggerAutogen(options)(outputFile, routes, doc);
+  res.json(result ? result.data : null);
+});
+
 // API 라우트
 app.post("/api/v1/users/signup", handleUserSignUp); // 회원가입
 app.post("/api/v1/stores", handleAddStore); // 가게등록
@@ -68,6 +101,7 @@ app.get("/api/v1/users/:userId/reviews", handleListUserReviews);  // ✅ 내가 
 app.get("/api/v1/stores/:storeId/missions", handleListStoreMissions);  // ✅ 특정 가게 미션 목록
 app.get("/api/v1/users/:userId/missions/ongoing", handleListUserOngoingMissions);  // ✅ 진행 중인 미션 목록
 app.patch("/api/v1/users/:userId/missions/:userMissionId/complete", handleCompleteUserMissions);  // ✅ 미션 완료 처리
+
 
 // 전역 오류 처리 미들웨어
 app.use((err, req, res, next) => {

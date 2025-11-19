@@ -5,6 +5,7 @@ export const addUser = async (userDTO) => {
   try{
     //사용자 추가
     const createdUser = await addUserToDB(userDTO);
+    
     //응답 데이터 반환 DTO
     return responseFromUser(createdUser);
   }catch (err){
