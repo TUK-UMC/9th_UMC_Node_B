@@ -19,3 +19,25 @@ export const pool = mysql.createPool({
   connectionLimit: 10, // 몇 개의 커넥션을 가지게끔 할 것인지
   queueLimit: 0, // getConnection에서 오류가 발생하기 전에 Pool에 대기할 요청의 개수 한도
 });
+
+import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
+
+const jwtOptions = {
+  // 요청 헤더의 'Authorization'에서 'Bearer <token>' 토큰을 추출
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: process.env.JWT_SECRET,
+};
+
+export const jwtStrategy = new JwtStrategy(jwtOptions, async (payload, done) => {
+  try {
+    const user = await prisma.user.findFirst({ where: { id: payload.id } });
+
+    if (user) {
+      return done(null, user);
+    } else {
+      return done(null, false);
+    }
+  } catch (err) {
+    return done(err, false);
+  }
+});

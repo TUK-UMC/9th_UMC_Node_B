@@ -5,23 +5,64 @@ import { CustomError } from "../errors/customError.js";
 /**
  * 회원 가입 API
  * @route POST /api/v1/users/signup
+ * 
+ * #swagger.summary = '회원 가입 API'
+ * #swagger.requestBody = {
+ *   required: true,
+ *   content: {
+ *     "application/json": {
+ *       schema: {
+ *         type: "object",
+ *         properties: {
+ *           email: { type: "string", example: "test@example.com" },
+ *           name: { type: "string", example: "홍길동" }
+ *         }
+ *       }
+ *     }
+ *   }
+ * }
+ * #swagger.responses[200] = {
+ *   description: "회원 가입 성공 응답",
+ *   content: {
+ *     "application/json": {
+ *       schema: {
+ *         type: "object",
+ *         properties: {
+ *           resultType: { type: "string", example: "SUCCESS" },
+ *           error: { type: "object", nullable: true, example: null },
+ *           success: {
+ *             type: "object",
+ *             properties: {
+ *               email: { type: "string", example: "test@example.com" },
+ *               name: { type: "string", example: "홍길동" }
+ *             }
+ *           }
+ *         }
+ *       }
+ *     }
+ *   }
+ * }
+ * #swagger.responses[400] = {
+ *   description: "회원 가입 실패 응답",
+ *   content: {
+ *     "application/json": {
+ *       schema: {
+ *         type: "object",
+ *         properties: {
+ *           resultType: { type: "string", example: "FAIL" },
+ *           error: { type: "object", example: { errorCode: "U001", reason: "이메일 중복" } },
+ *           success: { type: "object", nullable: true, example: null }
+ *         }
+ *       }
+ *     }
+ *   }
+ * }
  */
 export const handleUserSignUp = async (req, res, next) => {
-  /*
-    #swagger.summary = '회원 가입 API';
-    #swagger.requestBody = { ... }  // 위 코드와 동일하게 유지
-    #swagger.responses[200] = { ... }
-    #swagger.responses[400] = { ... }
-  */
   try {
     const userData = req.body;
-
-    // 실제 회원 생성 서비스 호출
-    const newUser = await addUser(userData); // ← 여기 수정
-
-    // 성공 시 반환
+    const newUser = await addUser(userData);
     res.success(responseFromUser(newUser));
-
   } catch (err) {
     next(err);
   }
