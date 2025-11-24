@@ -20,7 +20,6 @@ export const responseFromMission = (mission) => ({
   mission_id: mission.mission_id,
   store_id: mission.store_id,
   title: mission.title,
-  owner_code: mission.owner_code,
   description: mission.description,
   reward_point: mission.reward_point,
   expire_at: mission.expire_at,
