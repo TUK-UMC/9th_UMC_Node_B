@@ -1,10 +1,9 @@
 //입력 DTO
-export const bodyToReview = (body, storeId) => ({
+export const bodyToReview = (body, storeId, userId) => ({
   store_id: storeId,
-  user_id: body.user_id,
+  user_id: userId,
   rating: body.rating,
   content: body.content,
-
 });
 
 //출력 DTO

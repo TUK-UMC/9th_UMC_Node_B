@@ -7,12 +7,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
 //사용자 테이블
 model users {
   user_id          Int       @id @default(autoincrement())
   user_name        String    @db.VarChar(100)
   gender           Gender
-  birthdate        DateTime  @db.Date
+  birthdate        DateTime?  @db.Date
   address          String    @db.VarChar(100)
   phone            String    @db.VarChar(100)
   created_at       DateTime  @default(now())

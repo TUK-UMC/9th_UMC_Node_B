@@ -1,6 +1,5 @@
 /*※웬만하면 에러 핸들링 사용하지 말것※*/
-import { prisma } from "../db.config.js";
-import { InternalServerError, NotFoundError } from "../errors/systemErrors.js";
+import { prisma } from "../config/db.config.js";
 
 //미션 존재 여부 확인
 export const isMissionExist = async (data) => {

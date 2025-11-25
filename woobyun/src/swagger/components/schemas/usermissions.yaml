@@ -1,0 +1,81 @@
+UserMission:
+  type: object
+  properties:
+    user_mission_id:
+      type: number
+      example: 1
+    user_id:
+      type: number
+      example: 1
+    mission_id:
+      type: number
+      example: 1
+    store_id:
+      type: number
+      example: 1
+    mission_status:
+      type: string
+      example: "ongoing"
+    started_at:
+      type: string
+      format: date-time
+    completed_at:
+      type: string
+      format: date-time
+      nullable: true
+    success_flag:
+      type: boolean
+    created_at:
+      type: string
+      format: date-time
+    updated_at:
+      type: string
+      format: date-time
+
+UserMissionListItem:
+  type: object
+  properties:
+    user_mission_id:
+      type: number
+    mission_status:
+      type: string
+    started_at:
+      type: string
+      format: date-time
+    completed_at:
+      type: string
+      format: date-time
+      nullable: true
+    success_flag:
+      type: boolean
+    mission:
+      type: object
+      properties:
+        mission_id:
+          type: number
+        title:
+          type: string
+        reward_point:
+          type: number
+        expire_at:
+          type: string
+          format: date-time
+    store:
+      type: object
+      properties:
+        store_id:
+          type: number
+        store_name:
+          type: string
+
+UserMissionResult:
+  type: object
+  properties:
+    user_mission_id: { type: number }
+    user_id: { type: number }
+    mission_id: { type: number }
+    store_id: { type: number }
+    mission_status: { type: string }
+    started_at: { type: string, format: date-time }
+    completed_at: { type: string, format: date-time }
+    success_flag: { type: boolean }

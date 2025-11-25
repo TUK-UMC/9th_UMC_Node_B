@@ -1,0 +1,14 @@
+CreateStore:
+  post:
+    tags:
+      - stores
+    summary: 가게 추가 API
+    requestBody:
+      $ref: "./components/requestBodies/store.yaml#/CreateStoreRequest"
+    responses:
+      201:
+        $ref: "./components/responses/store.yaml#/CreateStoreSuccess"
+      400:
+        $ref: "./components/responses/store.yaml#/CreateStoreBadRequest"
+      500:
+        $ref: "./components/responses/store.yaml#/CreateStoreServerError"

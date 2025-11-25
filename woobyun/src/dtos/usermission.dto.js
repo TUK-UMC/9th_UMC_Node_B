@@ -1,6 +1,6 @@
 // 입력 DTO
-export const bodyToUserMission = (body, storeId, missionId) => ({
-  user_id: body.user_id,
+export const bodyToUserMission = (storeId, missionId, userId) => ({
+  user_id: userId,
   store_id: storeId,
   mission_id: missionId,
 });

@@ -1,0 +1,68 @@
+UserSignUpSuccess:
+  description: 회원 가입 성공
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          isSuccess:
+            type: boolean
+            example: true
+          code:
+            type: number
+            example: 201
+          message:
+            type: string
+            example: "회원 가입 성공"
+          data:
+            $ref: "./schemas/users.yaml#/User"
+
+UserSignUpBadRequest:
+  description: 필수값 누락
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          isSuccess:
+            type: boolean
+            example: false
+          code:
+            type: number
+            example: 400
+          message:
+            type: string
+            example: "필수 정보 입력 필요"
+
+UserAlreadyExists:
+  description: 이미 등록된 사용자
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          isSuccess:
+            type: boolean
+            example: false
+          code:
+            type: number
+            example: 409
+          message:
+            type: string
+            example: "이미 존재하는 사용자입니다."
+
+UserSignUpServerError:
+  description: 서버 내부 오류
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          isSuccess:
+            type: boolean
+            example: false
+          code:
+            type: number
+            example: 500
+          message:
+            type: string

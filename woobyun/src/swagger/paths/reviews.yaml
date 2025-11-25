@@ -1,0 +1,41 @@
+AddReview:
+  post:
+    tags:
+      - stores
+    summary: 리뷰 추가 API
+    requestBody:
+      $ref: "./components/requestBodies/reviews.yaml#/AddReviewRequest"
+    responses:
+      201:
+        $ref: "./components/responses/reviews.yaml#/AddReviewSuccess"
+      400:
+        $ref: "./components/responses/reviews.yaml#/AddReviewBadRequest"
+      404:
+        $ref: "./components/responses/reviews.yaml#/StoreNotFound"
+      500:
+        $ref: "./components/responses/reviews.yaml#/AddReviewServerError"
+
+ListUserReviews:
+  get:
+    tags:
+      - users
+    summary: 리뷰 목록 조회 API
+    parameters:
+      - in: path
+        name: userId
+        required: true
+        schema:
+          type: number
+        description: 리뷰를 조회할 userId
+      - in: query
+        name: cursor
+        required: false
+        schema:
+          type: number
+          example: 10
+        description: 페이지네이션 커서
+    responses:
+      200:
+        $ref: "./components/responses/reviews.yaml#/ListReviewsSuccess"
+      404:
+        $ref: "./components/responses/reviews.yaml#/UserReviewNotFound"

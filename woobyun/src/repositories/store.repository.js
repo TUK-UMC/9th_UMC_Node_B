@@ -1,5 +1,5 @@
 /*※웬만하면 에러 핸들링 사용하지 말것※*/
-import { prisma } from "../db.config.js";
+import { prisma } from "../config/db.config.js";
 
 export const addStoreToDB = async (data) => {
   return prisma.store.create({

@@ -1,0 +1,52 @@
+CreateStoreSuccess:
+  description: 가게 생성 성공
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          isSuccess:
+            type: boolean
+            example: true
+          code:
+            type: number
+            example: 201
+          message:
+            type: string
+            example: "가게 추가 성공"
+          data:
+            $ref: "./schemas/stores.yaml#/Store"
+
+CreateStoreBadRequest:
+  description: 필수값 누락
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          isSuccess:
+            type: boolean
+            example: false
+          code:
+            type: number
+            example: 400
+          message:
+            type: string
+            example: "필수값 입력 필요"
+
+CreateStoreServerError:
+  description: 가게 등록 실패
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          isSuccess:
+            type: boolean
+            example: false
+          code:
+            type: number
+            example: 500
+          message:
+            type: string
+            example: "이미 등록된 가게 입니다"

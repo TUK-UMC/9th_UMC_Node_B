@@ -1,0 +1,30 @@
+User:
+  type: object
+  properties:
+    user_id:
+      type: number
+      example: 1
+    user_name:
+      type: string
+      example: "양우영"
+    gender:
+      type: string
+      example: "M"
+    birthdate:
+      type: string
+      example: "2002-05-27"
+    address:
+      type: string
+      example: "경기도 시흥시 정왕동"
+    phone:
+      type: string
+      example: "010-1234-5678"
+    social_provider:
+      type: string
+      example: "kakao"
+    social_id:
+      type: string
+      example: "kakao_123123"
+    point_balance:
+      type: number
+      example: 0

@@ -1,29 +1,20 @@
-import { prisma } from "../db.config.js";
+import { prisma } from "../config/db.config.js";
 
-export const addUserToDB = async (data) => {
-  return prisma.users.create({
+//user.repository.js의 역할: 사용자 정보 업데이트로 변경
+export const findUserByUserId = async(userId) => {
+  return prisma.users.findUnique({
+    where:{ user_id: userId },
+  });
+};
+export const updateUserById = async (userId, data) => {
+  return prisma.users.update({
+    where: { user_id: userId },
     data: {
       user_name: data.user_name,
       gender: data.gender,
-      birthdate: new Date(data.birthdate),
+      birthdate: data.birthdate ? new Date(data.birthdate) : undefined,
       address: data.address,
       phone: data.phone,
-      social_provider: data.social_provider,
-      social_id: data.social_id,
-      password: data.password,
-      point_balance: data.point_balance || 0,
-    }
-  });
-};
-
-//중복된 사용자가 있는지 확인
-export const findUserById = async (social_provider, social_id) => {
-  return prisma.users.findUnique({
-    where: {
-      social_provider_social_id:{
-        social_provider,
-        social_id,
-      },
     },
   });
 };

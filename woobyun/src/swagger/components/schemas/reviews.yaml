@@ -1,0 +1,46 @@
+Review:
+  type: object
+  properties:
+    review_id:
+      type: number
+      example: 10
+    store_id:
+      type: number
+      example: 1
+    user_id:
+      type: number
+      example: 1
+    rating:
+      type: number
+      example: 4.9
+    content:
+      type: string
+      example: "맛있어요!"
+    created_at:
+      type: string
+      format: date-time
+      example: "2025-11-24T12:53:22.000Z"
+    updated_at:
+      type: string
+      format: date-time
+      example: "2025-11-24T12:53:22.000Z"
+
+ReviewListItem:
+  type: object
+  properties:
+    review_id:
+      type: number
+    content:
+      type: string
+    rating:
+      type: number
+    created_at:
+      type: string
+      format: date-time
+    store:
+      type: object
+      properties:
+        store_id:
+          type: number
+        store_name:
+          type: string
