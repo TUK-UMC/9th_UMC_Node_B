@@ -1,0 +1,124 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+//사용자 테이블
+model users {
+  user_id          Int       @id @default(autoincrement())
+  user_name        String    @db.VarChar(100)
+  gender           Gender
+  birthdate        DateTime  @db.Date
+  address          String    @db.VarChar(100)
+  phone            String    @db.VarChar(100)
+  created_at       DateTime  @default(now())
+  updated_at       DateTime? @updatedAt
+  social_provider  Provider
+  social_id        String    @db.VarChar(100)
+  password         String    @db.VarChar(255)
+  point_balance    Int       @default(0)
+
+  //리뷰 관련 필드 - 1대N관계로 설정
+  reviews review[]
+
+  //미션 현황 관련 필드
+  usermissions usermission[]
+
+  @@map("users")
+  @@unique([social_provider, social_id])
+}
+enum Gender {
+  M
+  F
+  N
+}
+enum Provider {
+  kakao
+  naver
+  google
+  apple
+}
+
+//가게 테이블
+model store {
+  store_id         Int       @id @default(autoincrement())
+  store_name       String    @db.VarChar(100)
+  region_name      String    @db.VarChar(255)
+  store_image_url  String?   @db.VarChar(255)
+  address          String    @db.VarChar(300)
+  description      String?   @db.VarChar(300)
+  created_at       DateTime  @default(now())
+  updated_at       DateTime? @updatedAt
+  
+  //리뷰 관련 관계 추가 - 1대 N관계로 설정
+  reviews          review[]
+  //미션 관련 관계 추가
+  usermissions usermission[]
+  @@map("store")
+  @@unique([store_id])
+}
+
+//리뷰 테이블
+model review {
+  review_id   Int   @id @default(autoincrement())
+  store_id    Int   
+  user_id     Int
+  rating      Decimal   @db.Decimal(2, 1)
+  content     String?    @db.Text
+  created_at  DateTime  @default(now())
+  updated_at  DateTime? @updatedAt
+
+  //리뷰 관련 관계 추가
+  store store  @relation(fields: [store_id], references: [store_id])
+  user  users  @relation(fields: [user_id], references: [user_id])
+  @@map("review")
+}
+
+//미션 테이블
+model mission {
+  mission_id    Int           @id @default(autoincrement())
+  store_id      Int
+  title         String        @db.VarChar(100)
+  owner_code    String        @db.VarChar(50)
+  description   String        @db.VarChar(300)
+  reward_point  Int     
+  expire_at     DateTime  
+  created_at    DateTime      @default(now())
+  updated_at    DateTime?     @updatedAt
+
+  //미션 현황 관련 필드
+  usermissions  usermission[]
+  @@map("mission")
+}
+
+//사용자-미션 테이블
+model usermission {
+  user_mission_id   Int               @id @default(autoincrement())
+  user_id           Int
+  mission_id        Int
+  store_id          Int
+  mission_status    MissionStatus     @default(ongoing)
+  started_at        DateTime          @default(now())
+  completed_at      DateTime?
+  success_flag      Boolean           @default(false)
+  created_at        DateTime          @default(now())
+  updated_at        DateTime?         @updatedAt
+
+  //관계 추가
+  user  users? @relation(fields: [user_id], references: [user_id])
+  mission mission @relation(fields: [mission_id], references: [mission_id])
+  store   store   @relation(fields: [store_id], references: [store_id])
+
+  @@map("usermission")
+  @@unique([user_id, mission_id, store_id])
+}
+enum MissionStatus {
+  waiting
+  ongoing
+  completed
+  reviewed
+}
