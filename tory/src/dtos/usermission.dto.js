@@ -1,10 +1,8 @@
-// 입력 DTO
-export const bodyToUserMission = (body, storeId, missionId) => ({
-  user_id: body.user_id,
+export const bodyToUserMission = (storeId, missionId, userId) => ({
+  user_id: userId,
   store_id: storeId,
   mission_id: missionId,
 });
-
 //출력 DTO
 export const responseFromUserMission = (mission) => ({
   user_mission_id: mission.user_mission_id,
@@ -16,7 +14,6 @@ export const responseFromUserMission = (mission) => ({
   completed_at: mission.completed_at || null,
   success_flag: mission.success_flag ?? false,
 });
-
 //진행중인 미션 목록 조회 DTO
 export const responseFromUserMissions = (missions) => {
   const result = {

@@ -1,87 +1,54 @@
 import { StatusCodes } from "http-status-codes";
-import { bodyToUser } from "../dtos/user.dto.js";
-import { addUser } from "../services/user.service.js";
+import { CustomError } from "../errors/customError.js";
+import { successHandler } from "../middlewares/successHandler.js";
+import { bodyToUserUpdate } from "../dtos/user.dto.js";
+import { updateUserInfo  } from "../services/user.service.js";
 
-export const handleUserSignUp = async (req, res, next) => {
-  /*
-    #swagger.summary = '회원 가입 API';
-    #swagger.requestBody = {
-      required: true,
-      content: {
-        "application/json": {
-          schema: {
-            type: "object",
-            properties: {
-              email: { type: "string" },
-              name: { type: "string" },
-              gender: { type: "string" },
-              birth: { type: "string", format: "date" },
-              address: { type: "string" },
-              detailAddress: { type: "string" },
-              phoneNumber: { type: "string" },
-              preferences: { type: "array", items: { type: "number" } }
-            }
-          }
-        }
-      }
-    };
-    #swagger.responses[200] = {
-      description: "회원 가입 성공 응답",
-      content: {
-        "application/json": {
-          schema: {
-            type: "object",
-            properties: {
-              resultType: { type: "string", example: "SUCCESS" },
-              error: { type: "object", nullable: true, example: null },
-              success: {
-                type: "object",
-                properties: {
-                  email: { type: "string" },
-                  name: { type: "string" },
-                  preferCategory: { type: "array", items: { type: "string" } }
-                }
-              }
-            }
-          }
-        }
-      }
-    };
-    #swagger.responses[400] = {
-      description: "회원 가입 실패 응답",
-      content: {
-        "application/json": {
-          schema: {
-            type: "object",
-            properties: {
-              resultType: { type: "string", example: "FAIL" },
-              error: {
-                type: "object",
-                properties: {
-                  errorCode: { type: "string", example: "U001" },
-                  reason: { type: "string" },
-                  data: { type: "object" }
-                }
-              },
-              success: { type: "object", nullable: true, example: null }
-            }
-          }
-        }
-      }
-    };
-  */
+//기존 회원가입 API -> 사용자 정보 업데이트로 수정함
+//social_id로 로그인하면 아이디, 비밀번호는 가져옴 -> 간단한 회원 정보만 수정하는 방향으로 함
+export const handleUserUpdate = async (req, res, next) => {
   try {
-    console.log("사용자 회원가입 요청:", req.body);
+    //jwt에서 가져오기
+    const userId = req.user.user_id;
+    const body = req.body;
 
-    const userDTO = bodyToUser(req.body);
-    const user = await addUser(userDTO);
+    //social_provider, social_id는 수정 불가능하게 설정
+    if(body.social_provider || body.social_id){
+      throw new CustomError(StatusCodes.BAD_REQUEST, "social 정보는 수정할 수 없습니다.");
+    }
 
-    res.status(StatusCodes.CREATED).json({
-      success: true,
-      message: `user_id: ${user.user_id} 회원가입 성공`,
-      data: user,
-    });
+    //입력값 유효성 검증
+    const {user_name, gender, birthdate, address, phone} = body;
+
+    if (!user_name || user_name.trim() === 0 ) {
+      throw new CustomError(StatusCodes.BAD_REQUEST, "user_name 입력 필요");
+    }
+    if (!gender) {
+      throw new CustomError(StatusCodes.BAD_REQUEST, "gender 입력 필요");
+    }
+    if (!birthdate) {
+      throw new CustomError(StatusCodes.BAD_REQUEST, "birhdate 입력 필요");
+    }
+    if (!address || address.trim() === 0 ) {
+      throw new CustomError(StatusCodes.BAD_REQUEST, "address 입력 필요");
+    }
+    if (!phone || phone.trim() === 0 ) {
+      throw new CustomError(StatusCodes.BAD_REQUEST, "phone 입력 필요");
+    }
+
+    // DTO 변환
+    const updateDTO = bodyToUserUpdate(req.body);
+    // 서비스 호출
+    const updated = await updateUserInfo(userId, updateDTO);
+
+    return successHandler(
+      res, 
+      StatusCodes.OK, 
+      "사용자 정보 업데이트 성공", 
+      updated
+    );
   } catch (err) {
     next(err);
   }
+
 };

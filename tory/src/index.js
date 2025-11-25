@@ -2,95 +2,71 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import morgan from "morgan";
-import cookieParser from "cookie-parser";
-import swaggerAutogen from "swagger-autogen";
-import swaggerUiExpress from "swagger-ui-express";
+import cookieParser  from "cookie-parser";
 
-import { handleUserSignUp } from "./controllers/user.controller.js";
+import YAML from "yamljs";
+import swaggerUi from "swagger-ui-express";
+
+import passport from "./config/passport.js";
+import authRoutes from "./routes/auth.router.js";
+
 import { handleAddStore } from "./controllers/store.controller.js";
 import { handleAddReview } from "./controllers/review.controller.js";
 import { handleAddMission } from "./controllers/mission.controller.js";
 import { handleChallengeMission } from "./controllers/usermission.controller.js";
-
 import { errorHandler } from "./middlewares/error.middleware.js";
-
 import { reviewRouter } from "./routes/review.router.js";
 import { missionRouter } from "./routes/mission.router.js";
 import { userMissionRouter } from "./routes/usermission.router.js";
+import { userRouter } from "./routes/user.router.js";
+import { storeRouter } from "./routes/store.router.js";
+
+import { isLogin } from "./middlewares/islogin.middleware.js";
 
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 8080;
+const port = process.env.PORT;
 const prefix = "/api/v1";
 
-// 기본 미들웨어
-app.use(cors());
-app.use(express.static("public"));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+/* Swagger (YAML) */
+const swaggerDocument = YAML.load("./src/swagger/openapi.yaml");
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-// 추가: morgan, cookie-parser
-app.use(morgan("dev"));
+/* 미들웨어 */
+app.use(cors()); // cors 방식 허용
+app.use(express.static("public")); // 정적 파일 접근
+app.use(express.json()); // request의 본문을 json으로 해석할 수 있도록 함 (JSON 형태의 요청 body를 파싱하기 위함)
+app.use(express.urlencoded({ extended: false })); // 단순 객체 문자열 형태로 본문 데이터 해석
+app.use(morgan("dev")); //로그 포맷: dev
 app.use(cookieParser());
 
-// 라우터
+/* PassPort */
+app.use(passport.initialize());
+app.use(authRoutes);
+
+
+/* 라우터 관련 */
+app.use(`${prefix}`, userRouter);
+app.use(`${prefix}`, storeRouter);
 app.use(`${prefix}`, reviewRouter);
 app.use(`${prefix}`, missionRouter);
 app.use(`${prefix}`, userMissionRouter);
 
-// Health & 기본 라우트
-app.get("/", (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "Hello World!",
-    data: null,
-  });
-});
 
-// 단독 라우트(기존 유지)
-app.post("/api/v1/users/signup", handleUserSignUp);
-
-// 가게/리뷰/미션/유저미션 (create류 단독 라우트)
-app.post(`${prefix}/stores`, handleAddStore);
-app.post(`${prefix}/stores/:storeId/reviews`, handleAddReview);
-app.post(`${prefix}/stores/:storeId/missions`, handleAddMission);
-app.post(`${prefix}/stores/:storeId/missions/:missionId/challenge`, handleChallengeMission);
-
-// 에러 미들웨어
+/* 에러 관련 */
 app.use(errorHandler);
 
+/* 서버 시작 */
 app.listen(port, () => {
-  console.log(`${port} 포트에서 서버 운행 중`);
+  console.log(`${port}포트에서 서버 운행 중`);
 });
 
-app.use(
-  "/docs",
-  swaggerUiExpress.serve,
-  swaggerUiExpress.setup({}, {
-    swaggerOptions: {
-      url: "/openapi.json",
-    },
-  })
-);
-
-app.get("/openapi.json", async (req, res, next) => {
-  // #swagger.ignore = true
-  const options = {
-    openapi: "3.0.0",
-    disableLogs: true,
-    writeOutputFile: false,
-  };
-  const outputFile = "/dev/null"; // 파일 출력은 사용하지 않습니다.
-  const routes = ["./src/index.js"];
-  const doc = {
-    info: {
-      title: "UMC 9th",
-      description: "UMC 9th Node.js 테스트 프로젝트입니다.",
-    },
-    host: "localhost:3000",
-  };
-
-  const result = await swaggerAutogen(options)(outputFile, routes, doc);
-  res.json(result ? result.data : null);
+/* 회원가입,로그인 관련 */
+// 보호된 테스트 라우트
+app.get("/mypage", isLogin, (req, res) => {
+  res.status(200).json({
+    message: `인증 성공! ${req.user.name}님의 마이페이지`,
+    user: req.user,
+  });
 });
