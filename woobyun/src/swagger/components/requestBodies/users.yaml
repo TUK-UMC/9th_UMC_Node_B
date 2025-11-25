@@ -1,0 +1,34 @@
+UserSignUpRequest:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - user_name
+          - gender
+          - birthdate
+          - phone
+          - social_provider
+          - social_id
+          - password
+        properties:
+          user_name:
+            type: string
+          gender:
+            type: string
+            enum: ["M", "F", "N"]
+          birthdate:
+            type: string
+            format: date
+          phone:
+            type: string
+          social_provider:
+            type: string
+            enum: ["kakao", "naver", "google", "apple"]
+          social_id:
+            type: string
+          password:
+            type: string
+          address:
+            type: string

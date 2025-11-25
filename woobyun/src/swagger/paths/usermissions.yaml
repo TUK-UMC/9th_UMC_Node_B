@@ -1,0 +1,83 @@
+UserMissionCreate:
+  post:
+    tags:
+      - usermissions
+    summary: 사용자 미션 등록 API
+    parameters:
+      - in: path
+        name: storeId
+        required: true
+        schema:
+          type: number
+        description: 가게 ID
+      - in: path
+        name: missionId
+        required: true
+        schema:
+          type: number
+        description: 미션 ID
+    requestBody:
+      $ref: "./components/requestBodies/usermissions.yaml#/UserMissionCreateRequest"
+    responses:
+      201:
+        $ref: "./components/responses/usermissions.yaml#/UserMissionCreateSuccess"
+      404:
+        $ref: "./components/responses/usermissions.yaml#/MissionNotFound"
+      400:
+        $ref: "./components/responses/usermissions.yaml#/UserMissionBadRequest"
+      500:
+        $ref: "./components/responses/usermissions.yaml#/UserMissionServerError"
+
+
+UserMissionList:
+  get:
+    tags:
+      - usermissions
+    summary: 진행 중인 사용자 미션 목록 조회 API
+    parameters:
+      - in: path
+        name: userId
+        required: true
+        schema:
+          type: number
+        description: 사용자 ID
+      - in: query
+        name: cursor
+        required: false
+        schema:
+          type: number
+          example: 10
+        description: 페이지네이션 커서
+    responses:
+      200:
+        $ref: "./components/responses/usermissions.yaml#/UserMissionListSuccess"
+      404:
+        $ref: "./components/responses/usermissions.yaml#/UserMissionListNotFound"
+
+
+UserMissionComplete:
+  patch:
+    tags:
+      - usermissions
+    summary: 사용자 미션 완료 처리 API
+    parameters:
+      - in: path
+        name: userId
+        required: true
+        schema:
+          type: number
+      - in: path
+        name: userMissionId
+        required: true
+        schema:
+          type: number
+        description: 유저 미션 ID
+    responses:
+      200:
+        $ref: "./components/responses/usermissions.yaml#/UserMissionCompleteSuccess"
+      404:
+        $ref: "./components/responses/usermissions.yaml#/MissionNotFound"
+      400:
+        $ref: "./components/responses/usermissions.yaml#/UserMissionBadRequest"
+      500:
+        $ref: "./components/responses/usermissions.yaml#/UserMissionServerError"

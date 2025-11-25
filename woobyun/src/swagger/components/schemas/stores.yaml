@@ -1,0 +1,30 @@
+Store:
+  type: object
+  properties:
+    store_id:
+      type: number
+      example: 1
+    store_name:
+      type: string
+      example: "탕화쿵푸 정왕점"
+    region_name:
+      type: string
+      example: "경기도 시흥시"
+    store_image_url:
+      type: string
+      example: "https://example.com/store.jpg"
+    address:
+      type: string
+      example: "경기도 시흥시 정왕역로 123"
+    description:
+      type: string
+      example: "마라탕 조아!"
+    created_at:
+      type: string
+      format: date-time
+    updated_at:
+      type: string
+      format: date-time
+    point_balance:
+      type: number
+      example: 0
