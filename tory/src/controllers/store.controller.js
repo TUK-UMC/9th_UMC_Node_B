@@ -1,25 +1,32 @@
 import { StatusCodes } from "http-status-codes";
 import { bodyToStore } from "../dtos/store.dto.js";
 import { addStore } from "../services/store.service.js";
-import { RequestError } from "../errors/systemErrors.js";
+import { NotFoundError } from "../errors/systemErrors.js";
+import { successHandler } from "../middlewares/successHandler.js";
 
 export const handleAddStore = async (req, res, next) => {
   try {
-    console.log("가게 추가 요청:", req.body);
-
-    if (!req.body.store_name || !req.body.region_name || !req.body.address) {
-      throw new RequestError("store_name, region_name, address는 필수 입니다.");
+    //입력값 유효성 검증
+    const {store_name, region_name, address} = req.body;
+    if(!store_name || store_name.trim().length === 0){
+      throw new NotFoundError(StatusCodes.BAD_REQUEST, "store_name 입력 필요");
     }
-
+    if(!region_name || region_name.trim().length === 0){
+      throw new NotFoundError(StatusCodes.BAD_REQUEST, "region_name 입력 필요");
+    }
+    if(!address || address.trim().length === 0){
+      throw new NotFoundError(StatusCodes.BAD_REQUEST, "address 입력 필요");
+    }
+    //DTO 변환
     const storeDTO = bodyToStore(req.body);
     const store = await addStore(storeDTO);
-
-    res.status(StatusCodes.CREATED).json({
-      success: true,
-      message: "가게가 성공적으로 등록되었습니다.",
-      data: store,
-    });
-  } catch (err) {
+    return successHandler(
+      res, 
+      StatusCodes.CREATED, 
+      `store_id: ${store.store_id} 가게 등록 성공`, 
+      store
+    );
+  } catch (err) {//에러가 발생했을 때 실행되는 부분
     next(err);
   }
 };
