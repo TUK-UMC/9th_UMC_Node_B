@@ -1,19 +1,22 @@
-import { prisma } from "../config/db.config.js";
+import { prisma } from "../db.config.js";
 
 export const addStoreToDB = async (data) => {
-  return prisma.store.create({
-    data: {
-      store_name: data.store_name,
-      region_name: data.region_name,
-      store_image_url: data.store_image_url || null,
-      address: data.address,
-      description: data.description || null,
+  try{
+    const createdStore = await prisma.store.create({
+      data: {
+        store_name: data.store_name,
+        region_name: data.region_name,
+        store_image_url: data.store_image_url || null,
+        address: data.address,
+        description: data.description || null,
+      }
+    });
+    return createdStore;
+  }catch (err){
+    if(err.code === "P2003"){
+      throw new Error("가게 추가에 오류가 있습니다.");
     }
-  });
-};
-//중복된 가게가 있는지 검사
-export const findStoreByName = async (store_name) => {
-  return prisma.store.findFirst({
-    where: { store_name },
-  });
+    throw err;
+  }
+
 };

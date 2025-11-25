@@ -1,18 +1,18 @@
 generator client {
   provider = "prisma-client-js"
 }
+
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
-
 
 //사용자 테이블
 model users {
   user_id          Int       @id @default(autoincrement())
   user_name        String    @db.VarChar(100)
   gender           Gender
-  birthdate        DateTime?  @db.Date
+  birthdate        DateTime  @db.Date
   address          String    @db.VarChar(100)
   phone            String    @db.VarChar(100)
   created_at       DateTime  @default(now())
@@ -39,6 +39,7 @@ enum Provider {
   google
   apple
 }
+
 //가게 테이블
 model store {
   store_id         Int       @id @default(autoincrement())
@@ -55,8 +56,8 @@ model store {
   //미션 관련 관계 추가
   usermissions usermission[]
   @@map("store")
-  @@unique([store_id])
 }
+
 //리뷰 테이블
 model review {
   review_id   Int   @id @default(autoincrement())
@@ -71,6 +72,7 @@ model review {
   user  users  @relation(fields: [user_id], references: [user_id])
   @@map("review")
 }
+
 //미션 테이블
 model mission {
   mission_id    Int           @id @default(autoincrement())
@@ -86,6 +88,7 @@ model mission {
   usermissions  usermission[]
   @@map("mission")
 }
+
 //사용자-미션 테이블
 model usermission {
   user_mission_id   Int               @id @default(autoincrement())
@@ -103,7 +106,6 @@ model usermission {
   mission mission @relation(fields: [mission_id], references: [mission_id])
   store   store   @relation(fields: [store_id], references: [store_id])
   @@map("usermission")
-  @@unique([user_id, mission_id, store_id])
 }
 enum MissionStatus {
   waiting

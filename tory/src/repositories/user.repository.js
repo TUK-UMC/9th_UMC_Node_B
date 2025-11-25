@@ -1,20 +1,26 @@
-import { prisma } from "../config/db.config.js";
+import { prisma } from "../db.config.js";
 
-//user.repository.js의 역할: 사용자 정보 업데이트로 변경
-export const findUserByUserId = async(userId) => {
-  return prisma.users.findUnique({
-    where:{ user_id: userId },
-  });
-};
-export const updateUserById = async (userId, data) => {
-  return prisma.users.update({
-    where: { user_id: userId },
-    data: {
-      user_name: data.user_name,
-      gender: data.gender,
-      birthdate: data.birthdate ? new Date(data.birthdate) : undefined,
-      address: data.address,
-      phone: data.phone,
-    },
-  });
+export const addUserToDB = async (data) => {
+  try{
+    const createdUser = await prisma.users.create({
+      data: {
+        user_name: data.user_name,
+        gender: data.gender,
+        birthdate: new Date(data.birthdate),
+        address: data.address,
+        phone: data.phone,
+        social_provider: data.social_provider,
+        social_id: data.social_id,
+        password: data.password,
+        point_balance: data.point_balance || 0,
+      }
+    });
+
+    return createdUser;
+  } catch(err){
+    if(err.code === "P2002"){
+      throw new Error("이미 존재하는 사용자입니다.");
+    }
+    throw err;
+  }
 };

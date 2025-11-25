@@ -1,9 +1,14 @@
-export const bodyToUserUpdate = (body) => ({
+//입력 DTO
+export const bodyToUser = (body) => ({
   user_name: body.user_name,
+  password: body.password,
   gender: body.gender,
   birthdate: body.birthdate,
   address: body.address,
   phone: body.phone,
+  social_provider: body.social_provider,
+  social_id: body.social_id,
+  point_balance: body.point_balance || 0,
 });
 
 //출력 DTO
@@ -15,6 +20,5 @@ export const responseFromUser = (user) => ({
   address: user.address,
   phone: user.phone,
   social_provider: user.social_provider,
-  social_id: user.social_id,
   point_balance: user.point_balance,
 });
