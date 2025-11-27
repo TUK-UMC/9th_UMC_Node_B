@@ -17,9 +17,11 @@ export const handleAddStore = async (req, res, next) => {
     if(!address || address.trim().length === 0){
       throw new NotFoundError(StatusCodes.BAD_REQUEST, "address 입력 필요");
     }
+
     //DTO 변환
     const storeDTO = bodyToStore(req.body);
     const store = await addStore(storeDTO);
+
     return successHandler(
       res, 
       StatusCodes.CREATED, 

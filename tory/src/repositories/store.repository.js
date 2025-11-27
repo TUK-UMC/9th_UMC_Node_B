@@ -11,6 +11,7 @@ export const addStoreToDB = async (data) => {
     }
   });
 };
+
 //중복된 가게가 있는지 검사
 export const findStoreByName = async (store_name) => {
   return prisma.store.findFirst({

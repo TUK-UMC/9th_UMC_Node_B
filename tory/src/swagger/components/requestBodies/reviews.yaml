@@ -1,0 +1,20 @@
+AddReviewRequest:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - user_id
+          - rating
+          - content
+        properties:
+          user_id:
+            type: number
+            example: 1
+          rating:
+            type: number
+            example: 4.9
+          content:
+            type: string
+            example: "맛있어용"

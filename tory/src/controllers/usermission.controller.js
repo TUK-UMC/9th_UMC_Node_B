@@ -8,7 +8,6 @@ export const handleChallengeMission = async (req, res, next) => {
   try {    
     const storeId = Number(req.params.storeId);
     const missionId = Number(req.params.missionId);
-    //jwt 가져오기
     const userId = req.body.user_id;
 
     //유효한 값 검증
@@ -46,6 +45,7 @@ export const handleListUserOngoingMissions = async(req, res, next) => {
         throw new CustomError(StatusCodes.BAD_REQUEST, "cursor는 0 이상이여야 함");
       }
     }
+
     const usermissions = await listUserOngoingMissions(userId, cursor);
     return successHandler(
       res, 

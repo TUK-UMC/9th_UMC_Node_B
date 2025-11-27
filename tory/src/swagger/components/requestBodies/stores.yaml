@@ -1,0 +1,28 @@
+CreateStoreRequest:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - store_name
+          - region_name
+          - store_image_url
+          - address
+          - description
+        properties:
+          store_name:
+            type: string
+            example: "명륜진사갈비 정왕점"
+          region_name:
+            type: string
+            example: "경기도 시흥시"
+          store_image_url:
+            type: string
+            example: "https://example.com/store.jpg"
+          address:
+            type: string
+            example: "경기도 시흥시 정왕로 123"
+          description:
+            type: string
+            example: "고기 너무 맛있다!"

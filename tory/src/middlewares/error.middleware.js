@@ -1,26 +1,20 @@
 import { StatusCodes } from "http-status-codes";
-import { Prisma } from "@prisma/client";
+import { CustomError } from "../errors/customError.js";
 
 export const errorHandler = (err, req, res, next) => {
-  console.error("❌ Error caught:", err);
+  console.error("Error:", err);
 
-  if (res.headersSent) return next(err);
-
-  let status = err.status || StatusCodes.INTERNAL_SERVER_ERROR;
-  let message = err.message || "Unexpected error occurred.";
-  let name = err.name || "InternalError";
-
-  // Prisma 에러 표준화
-  if (err instanceof Prisma.PrismaClientKnownRequestError) {
-    if (err.code === "P2002") {
-      status = StatusCodes.CONFLICT;
-      name = "ConflictError";
-      message = "이미 존재하는 데이터입니다.";
-    }
+  if (err instanceof CustomError){
+    return res.status(err.StatusCode).json({
+      isSuccess: false,
+      code: err.StatusCode,
+      message: err.message,
+    });
   }
 
-  return res.status(status).json({
-    success: false,
-    error: { name, message },
+  res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+    isSuccess: false,
+    code: StatusCodes.INTERNAL_SERVER_ERROR,
+    message: err.message || "서버 내부 오류가 발생했습니다.",
   });
 };

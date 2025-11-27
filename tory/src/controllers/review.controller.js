@@ -33,6 +33,7 @@ export const handleAddReview = async (req, res, next) => {
       "리뷰가 성공적으로 추가되었습니다.", 
       review
     );
+
   } catch (err) {
     next(err);
   }
@@ -46,13 +47,14 @@ export const handleListUserReviews = async (req, res, next) => {
     const cursor = typeof req.query.cursor === "string" ? parseInt(req.query.cursor): 0;
 
     const reviews = await listUserReviews(userId, cursor);
-    
+
     return successHandler(
       res, 
       StatusCodes.OK, 
       "리뷰 목록 조회 성공", 
       reviews
     );
+
   }catch(err) {
     next(err);
   }

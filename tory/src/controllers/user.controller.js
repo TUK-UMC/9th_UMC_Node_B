@@ -8,7 +8,6 @@ import { updateUserInfo  } from "../services/user.service.js";
 //social_id로 로그인하면 아이디, 비밀번호는 가져옴 -> 간단한 회원 정보만 수정하는 방향으로 함
 export const handleUserUpdate = async (req, res, next) => {
   try {
-    //jwt에서 가져오기
     const userId = req.user.user_id;
     const body = req.body;
 

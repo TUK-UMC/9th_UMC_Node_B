@@ -1,0 +1,87 @@
+openapi: 3.0.0
+
+info:
+  title: "UMC 9th Woobyun API"
+  description: "Woobyun의 Swagger 페이지 입니다."
+  version: "1.0.0"
+
+servers:
+  - url: http://localhost:3000
+    description: Local server
+
+#회원 가입
+paths:
+  /api/v1/users/signup:
+    post:
+      $ref: "./paths/users.yaml#/UsersSignup"
+
+#가게 등록
+  /api/v1/stores:
+    post:
+      $ref: "./paths/stores.yaml#/CreateStore"
+
+#리뷰 등록
+  /api/v1/stores/{storeId}/reviews:
+    post:
+      $ref: "./paths/reviews.yaml#/AddReview"
+#사용자 리뷰 조회
+  /api/v1/users/{userId}/reviews:
+    get:
+      $ref: "./paths/reviews.yaml#/ListUserReviews"
+
+#미션 등록,가게 미션 조회
+  /api/v1/stores/{storeId}/missions:
+    post:
+      $ref: "./paths/missions.yaml#/AddMission"
+    get:
+      $ref: "./paths/missions.yaml#/StoreMissions"  
+
+#사용자 미션 등록
+  /api/v1/users/{userId}/missions/challenge:
+    post:
+      $ref: "./paths/usermissions.yaml#/UserMissionCreate"
+#사용자 미션 조회
+  /api/v1/users/{userId}/missions:
+    get:
+      $ref: "./paths/usermissions.yaml#/UserMissionList"
+#사용자 미션 완료 처리
+  /api/v1/users/{userId}/missions/{missionId}:
+    patch:
+      $ref: "./paths/usermissions.yaml#/UserMissionComplete"
+
+components:
+  schemas:
+    User: 
+      $ref: "./components/schemas/users.yaml#/User"
+    Store:
+      $ref: "./components/schemas/stores.yaml#/Store"
+    Review:
+      $ref: "./components/schemas/reviews.yaml#/Review"
+    Mission:
+      $ref: "./components/schemas/missions.yaml#/Mission"
+    UserMission:
+      $ref: "./components/schemas/usermissions.yaml#/UserMission"
+
+  requestBodies:
+    User:
+      $ref: "./components/requestBodies/users.yaml#/UserSignUpRequest"
+    Store:
+      $ref: "./components/requestBodies/stores.yaml#/CreateStoreRequest" 
+    Review:
+      $ref: "./components/requestBodies/reviews.yaml#/AddReviewRequest"
+    Mission:
+      $ref: "./components/requestBodies/missions.yaml#/AddMissionRequest"
+    UserMission:
+      $ref: "./components/requestBodies/usermissions.yaml#/UserMissionCreateRequest"
+
+  responses:
+    User:
+      $ref: "./components/responses/users.yaml"
+    Store:
+      $ref: "./components/responses/stores.yaml"
+    Review:
+      $ref: "./components/responses/reviews.yaml"
+    Mission:
+      $ref: "./components/responses/missions.yaml"
+    UserMission:
+      $ref: "./components/responses/usermissions.yaml"

@@ -1,3 +1,4 @@
+//입력 DTO
 export const bodyToUserUpdate = (body) => ({
   user_name: body.user_name,
   gender: body.gender,

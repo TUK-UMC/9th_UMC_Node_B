@@ -1,0 +1,48 @@
+AddMission:
+  post:
+    tags:
+      - missions
+    summary: 미션 추가 API
+    parameters:
+      - in: path
+        name: storeId
+        required: true
+        schema:
+          type: number
+        description: 미션을 추가할 storeId
+    requestBody:
+      $ref: "./components/requestBodies/missions.yaml#/AddMissionRequest"
+    responses:
+      201:
+        $ref: "./components/responses/missions.yaml#/AddMissionSuccess"
+      400:
+        $ref: "./components/responses/missions.yaml#/AddMissionBadRequest"
+      404:
+        $ref: "./components/responses/missions.yaml#/MissionStoreNotFound"
+      500:
+        $ref: "./components/responses/missions.yaml#/AddMissionServerError"
+
+
+StoreMissions:
+  get:
+    tags:
+      - missions
+    summary: 특정 가게에서의 미션 목록 조회 API
+    parameters:
+      - in: path
+        name: storeId
+        required: true
+        schema:
+          type: number
+      - in: query
+        name: cursor
+        required: false
+        schema:
+          type: number
+          example: 10
+        description: 페이지네이션 커서
+    responses:
+      200:
+        $ref: "./components/responses/missions.yaml#/MissionListSuccess"
+      404:
+        $ref: "./components/responses/missions.yaml#/MissionNotFound"
