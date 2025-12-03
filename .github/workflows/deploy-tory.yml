@@ -1,0 +1,64 @@
+name: deploy-tory
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "$EC2_SSH_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+          cat >>~/.ssh/config <<END
+          Host server
+            HostName $EC2_HOST
+            User $EC2_USER
+            IdentityFile ~/.ssh/id_rsa
+            StrictHostKeyChecking no
+          END
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+          EC2_USER: ubuntu
+
+      - name: Upload files to EC2   
+        run: |
+          ssh server 'sudo mkdir -p /opt/app'
+          ssh server 'sudo chown ubuntu:ubuntu /opt/app'
+          scp -r ./[!.]* server:/opt/app
+
+      - name: Install dependencies
+        run: |
+          ssh server 'npm install --prefix /opt/app'
+
+      - name: Create systemd service
+        run: |
+          ssh server '
+            echo "[Unit]
+            Description=Node Server
+            After=network.target
+
+            [Service]
+            User=ubuntu
+            ExecStart=/usr/bin/npm start --prefix /opt/app
+            Restart=always
+
+            [Install]
+            WantedBy=multi-user.target" | sudo tee /etc/systemd/system/app.service
+          '
+
+      - name: Restart service
+        run: |
+          ssh server 'sudo systemctl daemon-reload'
+          ssh server 'sudo systemctl restart app'

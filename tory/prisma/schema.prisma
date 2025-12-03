@@ -1,6 +1,7 @@
 generator client {
   provider = "prisma-client-js"
 }
+
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
@@ -39,6 +40,7 @@ enum Provider {
   google
   apple
 }
+
 //가게 테이블
 model store {
   store_id         Int       @id @default(autoincrement())
@@ -57,6 +59,7 @@ model store {
   @@map("store")
   @@unique([store_id])
 }
+
 //리뷰 테이블
 model review {
   review_id   Int   @id @default(autoincrement())
@@ -71,6 +74,7 @@ model review {
   user  users  @relation(fields: [user_id], references: [user_id])
   @@map("review")
 }
+
 //미션 테이블
 model mission {
   mission_id    Int           @id @default(autoincrement())
@@ -86,6 +90,7 @@ model mission {
   usermissions  usermission[]
   @@map("mission")
 }
+
 //사용자-미션 테이블
 model usermission {
   user_mission_id   Int               @id @default(autoincrement())

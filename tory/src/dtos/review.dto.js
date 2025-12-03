@@ -1,3 +1,4 @@
+//입력 DTO
 export const bodyToReview = (body, storeId, userId) => ({
   store_id: storeId,
   user_id: userId,
@@ -15,6 +16,7 @@ export const responseFromReview = (review) => ({
   created_at: review.created_at,
   updated_at: review.updated_at
 });
+
 //리뷰 목록 조회 출력 DTO
 export const responseFromReviews = (reviews) => {
   const result = {

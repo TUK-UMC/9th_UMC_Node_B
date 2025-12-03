@@ -9,6 +9,7 @@ export const isStoreExist = async (storeId) => {
     }
   });
 };
+
 // 미션 추가(필요한 것: 값 존재하는지, 미션 생성 하기,)
 export const addMissionToDB = async (data) => {
   //미션 생성
@@ -23,6 +24,7 @@ export const addMissionToDB = async (data) => {
     }
   });
 };
+
 //특정 가게에서의 미션 목록 조회
 export const getAllStoreMissions = async (storeId, cursor) => {
   return prisma.mission.findMany({

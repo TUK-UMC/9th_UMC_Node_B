@@ -1,42 +1,44 @@
-export class RequestError extends Error {
-  constructor(message = "Request Error", status = 400) {
-    super(message);
-    this.name = "RequestError";
-    this.status = status;
+import { StatusCodes } from "http-status-codes";
+import { CustomError } from "../errors/customError.js";
+
+//400 -> 잘못된 요청
+export class RequestError extends CustomError{
+    constructor(message = "잘못된 요청입니다."){
+        super(StatusCodes.BAD_REQUEST, message);
+    }
+}
+
+//401 -> 인증 실패
+export class UnauthorizedError extends CustomError{
+    constructor(message="인증이 필요합니다."){
+        super(StatusCodes.UNAUTHORIZED, message);
+    }
+}
+
+//403 -> 접근 권한이 없음
+export class ForbiddenError extends CustomError {
+  constructor(message = "접근이 허용되지 않았습니다.") {
+    super(StatusCodes.FORBIDDEN, message);
   }
 }
-export class BadRequestError extends Error {
-  constructor(message = "Bad Request", status = 400) {
-    super(message);
-    this.name = "BadRequestError";
-    this.status = status;
+
+//404 -> 리소스가 없음
+export class NotFoundError extends CustomError {
+  constructor(message = "요청한 리소스를 찾을 수 없습니다.") {
+    super(StatusCodes.NOT_FOUND, message);
   }
 }
-export class NotFoundError extends Error {
-  constructor(message = "Not Found", status = 404) {
-    super(message);
-    this.name = "NotFoundError";
-    this.status = status;
+
+//409 -> 중복 데이터 
+export class ConflictError extends CustomError {
+  constructor(message = "요청이 충돌했습니다.") {
+    super(StatusCodes.CONFLICT, message);
   }
 }
-export class ConflictError extends Error {
-  constructor(message = "Conflict", status = 409) {
-    super(message);
-    this.name = "ConflictError";
-    this.status = status;
-  }
-}
-export class UnauthorizedError extends Error {
-  constructor(message = "Unauthorized", status = 401) {
-    super(message);
-    this.name = "UnauthorizedError";
-    this.status = status;
-  }
-}
-export class ForbiddenError extends Error {
-  constructor(message = "Forbidden", status = 403) {
-    super(message);
-    this.name = "ForbiddenError";
-    this.status = status;
+
+//500 -> 서버 내부 오류
+export class InternalServerError extends CustomError {
+  constructor(message = "서버 내부 오류가 발생했습니다.") {
+    super(StatusCodes.INTERNAL_SERVER_ERROR, message);
   }
 }

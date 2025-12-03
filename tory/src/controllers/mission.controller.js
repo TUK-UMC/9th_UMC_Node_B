@@ -13,12 +13,12 @@ export const handleAddMission = async (req, res, next) => {
     if(!title || !reward_point){
       throw new CustomError(StatusCodes.BAD_REQUEST,"title과 reward_point 필수 입력값입니다.");
     }
-    
+
     //dto 변환
     const missionDTO = bodyToMission(req.body, storeId);
     //비즈니스 로직을 호출
     const mission = await addMission(missionDTO);
-    
+
     return successHandler(
       res, 
       StatusCodes.CREATED, 
@@ -39,7 +39,7 @@ export const handleListStoreMissions = async(req, res, next) => {
     if(!storeId || isNaN(storeId)){
       throw new CustomError(StatusCodes.BAD_REQUEST, "유효한 storeId 필요");
     }
-    
+
     //가게 미션 조회 API에서 페이징 처리를 위한 초기 cursor값
     let cursor = 0;
     if(req.query.cursor){
@@ -48,6 +48,7 @@ export const handleListStoreMissions = async(req, res, next) => {
         throw new CustomError(StatusCodes.BAD_REQUEST, "cursor는 0 이상의 숫자여야 한다.");
       }
     }
+
     const missions = await listStoreMissions(storeId, cursor);
     return successHandler(
       res, 

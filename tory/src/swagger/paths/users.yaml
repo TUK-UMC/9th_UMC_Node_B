@@ -1,0 +1,16 @@
+UsersSignup:
+  post:
+    tags:
+      - users
+    summary: 회원 가입 API
+    requestBody:
+      $ref: "./components/requestBodies/users.yaml#/UserSignUpRequest"
+    responses:
+      201:
+        $ref: "./components/responses/users.yaml#/UserSignUpSuccess"
+      400:
+        $ref: "./components/responses/users.yaml#/UserSignUpBadRequest"
+      409:
+        $ref: "./components/responses/users.yaml#/UserAlreadyExists"
+      500:
+        $ref: "./components/responses/users.yaml#/UserSignUpServerError"

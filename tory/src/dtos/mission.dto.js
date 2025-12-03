@@ -1,3 +1,4 @@
+//입력 DTO -> mission을 생성하는 용도
 export const bodyToMission = (body, storeId) => ({
   store_id: storeId,
   title: body.title,
@@ -12,7 +13,6 @@ export const responseFromMission = (mission) => ({
   mission_id: mission.mission_id,
   store_id: mission.store_id,
   title: mission.title,
-  owner_code: mission.owner_code,
   description: mission.description,
   reward_point: mission.reward_point,
   expire_at: mission.expire_at,

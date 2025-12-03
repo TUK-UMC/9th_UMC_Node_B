@@ -1,0 +1,45 @@
+Mission:
+  type: object
+  properties:
+    mission_id:
+      type: number
+      example: 1
+    store_id:
+      type: number
+      example: 5
+    title:
+      type: string
+      example: "매장에서 식사하기"
+    description:
+      type: string
+      example: "리뷰 작성 시 500 포인트 지급"
+    reward_point:
+      type: number
+      example: 500
+    expire_at:
+      type: string
+      format: date-time
+      example: "2025-12-31T23:59:59"
+    created_at:
+      type: string
+      format: date-time
+    updated_at:
+      type: string
+      format: date-time
+
+MissionListItem:
+  type: object
+  properties:
+    mission_id:
+      type: number
+      example: 1
+    title:
+      type: string
+      example: "매장에서 식사하기"
+    reward_point:
+      type: number
+      example: 500
+    expire_at:
+      type: string
+      format: date-time
+      example: "2025-12-31T23:59:59"

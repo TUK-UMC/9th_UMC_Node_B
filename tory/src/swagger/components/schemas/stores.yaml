@@ -1,0 +1,30 @@
+Store:
+  type: object
+  properties:
+    store_id:
+      type: number
+      example: 1
+    store_name:
+      type: string
+      example: "명륜진사갈비 정왕점"
+    region_name:
+      type: string
+      example: "경기도 시흥시"
+    store_image_url:
+      type: string
+      example: "https://example.com/store.jpg"
+    address:
+      type: string
+      example: "경기도 시흥시 정왕로 123"
+    description:
+      type: string
+      example: "고기 너무 맛있다!"
+    created_at:
+      type: string
+      format: date-time
+    updated_at:
+      type: string
+      format: date-time
+    point_balance:
+      type: number
+      example: 0
