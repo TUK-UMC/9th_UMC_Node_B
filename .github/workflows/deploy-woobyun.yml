@@ -36,7 +36,7 @@ jobs:
         run: |
           ssh server 'sudo mkdir -p /opt/app'
           ssh server 'sudo chown ubuntu:ubuntu /opt/app'
-          scp -r ./* server:/opt/app
+          scp -r ./woobyun/* server:/opt/app
 
       - name: Install dependencies
         run: |
